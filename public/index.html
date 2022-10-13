@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>MultiMulti</title>
+</head>
+
+<body>
+    <h2>MultiMulti project</h2>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.2/socket.io.js"></script>
+
+    <script>
+        const socket = io.connect();
+
+        socket.on('connect', () => {
+            console.log('connected with ID: ' + socket.id);
+        });
+
+        socket.on('data', (data) => {
+            // For each object in data, update the position of all elements with id matching each objects id. If there are no elements matching the id, create a new element with that id.
+            for (let i = 0; i < data.length; i++) {
+                const player = document.getElementById(data[i].id);
+                if (player) {
+                    player.style.left = data[i].x + "px";
+                    player.style.top = data[i].y + "px";
+                } else {
+                    const player = document.createElement('div');
+                    player.id = data[i].id;
+                    player.innerHTML = `
+                    <p id='name'>${data[i].id}</p>
+                    <p id='char'>🧍</p>
+                    `;
+                    player.style.position = "absolute";
+                    player.style.left = data[i].x + "px";
+                    player.style.top = data[i].y + "px";
+                    document.body.appendChild(player);
+                }
+            }
+            // For each element that does not match an id in data, remove it.
+            const players = document.querySelectorAll('div');
+            for (let i = 0; i < players.length; i++) {
+                let found = false;
+                for (let j = 0; j < data.length; j++) {
+                    if (players[i].id === data[j].id) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    players[i].remove();
+                }
+            }
+        });
+
+        // Player controls.
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowRight") {
+                socket.emit("move", { id: socket.id, x: 10, y: 0 });
+            }
+            if (e.key === "ArrowLeft") {
+                socket.emit("move", { id: socket.id, x: -10, y: 0 });
+            }
+            if (e.key === "ArrowUp") {
+                socket.emit("move", { id: socket.id, x: 0, y: -10 });
+            }
+            if (e.key === "ArrowDown") {
+                socket.emit("move", { id: socket.id, x: 0, y: 10 });
+            }
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+
+div{
+    text-align: center;
+    height: 120px;
+}
+
+#char{
+    font-size: 62px;
+}
+
+#name{
+    font-size: 18px;
+    margin-top: 5px;
+    margin-bottom: -60px;
+}
