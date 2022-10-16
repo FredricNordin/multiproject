@@ -32,11 +32,10 @@ io.on('connection', (socket) => {
         io.emit('data', players);
     });
 
-    // When the client disconnects, find the object with id === socket.id and remove that index from the players array.
+    // When the client disconnects
     socket.on('disconnect', () => {
-        const index = players.findIndex(players => players.id === socket.id);
-        players.pop(index);
-        console.log("Client disconnected ID: " + socket.id);
+        // Remove the object with id matching the disconnected sockets id.'
+        players = players.filter((players) => players.id !== socket.id);
         // Update clients
         io.emit('data', players);
     });
