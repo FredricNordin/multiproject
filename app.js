@@ -6,7 +6,7 @@ import cors from 'cors';
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
 
 const server = http.createServer(app);
 const io = new Server(server);
@@ -19,6 +19,11 @@ io.on('connection', (socket) => {
     players.push({id: socket.id, x: 100, y: 100});
     // Update clients
     io.emit('data', players);
+
+    // socket.on test.
+    socket.on('test', (data) => {
+        console.log(data);
+    });
 
     // When the client sends a 'move' event find the object in players array matching data received from client, and update the x and y values for that object.
     socket.on('move', (data) => {
